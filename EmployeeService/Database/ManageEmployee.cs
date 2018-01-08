@@ -40,14 +40,6 @@ namespace EmployeeService.Database
         {
             using (SqlConnection connection = new SqlConnection(_conn))
             {
-                //string cmdText = @"select e.FirstName as firstName, 
-                //                          e.LastName as lastName, 
-                //                          e.Email as email,
-                //                          e.Address as addr, 
-                //                          e.PhoneNumber as phone,
-                //                          e.SSN as ssn
-
-                //    from Employee e, Salary s on e.Id = s.EmployeeId";
                 string cmdText = @"select *, s.Id as salaryId from Employee e, Salary s where e.Id = s.EmployeeId";
                 SqlCommand cmd = new SqlCommand(cmdText, connection);
                 connection.Open();
@@ -77,24 +69,57 @@ namespace EmployeeService.Database
                     emp.empSalary.EmployeeId = Convert.ToInt32(reader["EmployeeId"]);
                     float.TryParse(reader["Bonus"].ToString(), out bonus);
                     emp.empSalary.bonus = bonus;
-                    emp.empSalary.reimbursements = Convert.ToInt32(reader["Reimbursements"]);
-                    emp.empSalary.grossPay = Convert.ToInt32(reader["GrossPay"]);
-                    emp.empSalary.stateTax = Convert.ToInt32(reader["StateTax"]);
-                    emp.empSalary.federalTax = Convert.ToInt32(reader["FederalTax"]);
-                    emp.empSalary.socialSecurityTax = Convert.ToInt32(reader["SocialSecurityTax"]);
-                    emp.empSalary.healthInsurance = Convert.ToInt32(reader["HealthInsurance"]);
-                    emp.empSalary.payableSalary = Convert.ToInt32(reader["PayableSalary"]);
+                    float.TryParse(reader["Reimbursements"].ToString(), out reimbursements);
+                    emp.empSalary.reimbursements = reimbursements;
+                    float.TryParse(reader["GrossPay"].ToString(), out grossPay);
+                    emp.empSalary.grossPay = grossPay;
+                    float.TryParse(reader["StateTax"].ToString(), out stateTax);
+                    emp.empSalary.stateTax = stateTax;
+                    float.TryParse(reader["FederalTax"].ToString(), out federalTax);
+                    emp.empSalary.federalTax = federalTax;
+                    float.TryParse(reader["SocialSecurityTax"].ToString(), out socialSecurityTax);
+                    emp.empSalary.socialSecurityTax = socialSecurityTax;
+                    float.TryParse(reader["HealthInsurance"].ToString(), out healthInsurance);
+                    emp.empSalary.healthInsurance = healthInsurance;
+                    float.TryParse(reader["PayableSalary"].ToString(), out payableSalary);
+                    emp.empSalary.payableSalary = payableSalary;
                     employees.Add(emp);
                 }
                 return employees;
             }
         }
 
-        public static float createEmployee(Employee emp)
-        {
+        public static float createEmployee(Employee emp) {
             Salary sal = emp.empSalary;
             float payableSalary = calculatePayableSalary(sal);
-            return payableSalary;
+
+            using (SqlConnection conn = new SqlConnection(_conn)) {
+                SqlCommand cmd = new SqlCommand();
+                cmd.CommandType = System.Data.CommandType.StoredProcedure;
+                cmd.CommandText = "CreateEmployee";
+                cmd.Connection = conn;
+                cmd.Parameters.AddWithValue("@FirstName", emp.FirstName);
+                cmd.Parameters.AddWithValue("@LastName", emp.LastName);
+                cmd.Parameters.AddWithValue("@Email", emp.Email);
+                cmd.Parameters.AddWithValue("@Address", emp.Address);
+                cmd.Parameters.AddWithValue("@PhoneNumber", emp.PhoneNumber);
+                cmd.Parameters.AddWithValue("@SSN", emp.SSN);
+                cmd.Parameters.AddWithValue("@GrossPay", emp.empSalary.grossPay);
+                cmd.Parameters.AddWithValue("@StateTax", emp.empSalary.stateTax);
+                cmd.Parameters.AddWithValue("@FederalTax", emp.empSalary.federalTax);
+                cmd.Parameters.AddWithValue("@SocialSecurityTax", emp.empSalary.socialSecurityTax);
+                cmd.Parameters.AddWithValue("@Bonus", emp.empSalary.bonus);
+                cmd.Parameters.AddWithValue("@Reimbursements", emp.empSalary.reimbursements);
+                cmd.Parameters.AddWithValue("@HealthInsurance", emp.empSalary.healthInsurance);
+                //cmd.Parameters.AddWithValue("@EmployeeId", emp.empSalary.EmployeeId);
+                cmd.Parameters.AddWithValue("@PayableSalary", payableSalary);
+
+                conn.Open();
+                cmd.ExecuteNonQuery();
+
+                return payableSalary;
+
+            }
         }
 
         public static float calculatePayableSalary(Salary sal)
@@ -114,6 +139,16 @@ namespace EmployeeService.Database
 
         }
 
-
+        public static void deleteEmployee(int id)
+        {
+            using (SqlConnection connection = new SqlConnection(_conn))
+            {
+                string cmdText = @"delete from Employee where Id=@empId";
+                SqlCommand cmd = new SqlCommand(cmdText, connection);
+                cmd.Parameters.AddWithValue("@empId", id);
+                connection.Open();
+                cmd.ExecuteNonQuery();
+            }
+        }
     }
 }

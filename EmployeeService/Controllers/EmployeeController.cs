@@ -16,18 +16,31 @@ namespace EmployeeService.Controllers
         // GET api/employee
         public IHttpActionResult Get()
         {
-            return Ok(ManageEmployee.getAllEmployees());
+            try {
+                return Ok(ManageEmployee.getAllEmployees());
+            }
+            catch(Exception e)
+            {
+                return BadRequest();
+            }
         }
 
         // GET api/employee/5
-        public Employee Get(int id)
+        public IHttpActionResult Get(int id)
         {
-            return ManageEmployee.GetDetails(id);
+            try {
+                return Ok(ManageEmployee.GetDetails(id));
+            }
+            catch(Exception e)
+            {
+                return BadRequest();
+            }
         }
 
-        // POST api/values
+        // POST api/employee
         public IHttpActionResult Post( [FromBody]Employee emp)
         {
+            
             try
             {
                 return Ok(ManageEmployee.createEmployee(emp));
@@ -38,14 +51,23 @@ namespace EmployeeService.Controllers
             }
         }
 
-        // PUT api/values/5
+        // PUT api/employee/5
         public void Put(int id, [FromBody]string value)
         {
         }
 
-        // DELETE api/values/5
-        public void Delete(int id)
+        // DELETE api/employee/5
+        public IHttpActionResult Delete(int id)
         {
+            try
+            {
+                ManageEmployee.deleteEmployee(id);
+                return Ok();
+            }
+            catch(Exception e)
+            {
+                return BadRequest();
+            }
         }
     }
 }
