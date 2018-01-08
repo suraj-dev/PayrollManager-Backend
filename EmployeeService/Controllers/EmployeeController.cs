@@ -26,16 +26,16 @@ namespace EmployeeService.Controllers
         }
 
         // GET api/employee/5
-        public IHttpActionResult Get(int id)
-        {
-            try {
-                return Ok(ManageEmployee.GetDetails(id));
-            }
-            catch(Exception e)
-            {
-                return BadRequest();
-            }
-        }
+        //public IHttpActionResult Get(int id)
+        //{
+        //    try {
+        //        return Ok(ManageEmployee.GetDetails(id));
+        //    }
+        //    catch(Exception e)
+        //    {
+        //        return BadRequest();
+        //    }
+        //}
 
         // POST api/employee
         public IHttpActionResult Post( [FromBody]Employee emp)
@@ -43,7 +43,10 @@ namespace EmployeeService.Controllers
             
             try
             {
-                return Ok(ManageEmployee.createEmployee(emp));
+                float result = ManageEmployee.createEmployee(emp);
+                if(result != -1)
+                    return Ok(result);
+                return Content(HttpStatusCode.Conflict, "Employee record already exists");
             }
             catch(Exception e)
             {
