@@ -244,6 +244,7 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\EmployeeController.cs" />
+    <Compile Include="Database\ConnectionService.cs" />
     <Compile Include="Models\Employee.cs" />
     <Compile Include="Database\ManageEmployee.cs" />
     <Compile Include="Global.asax.cs">

@@ -10,10 +10,21 @@ using EmployeeService.Database;
 
 namespace EmployeeService.Controllers
 {
-  //  [Authorize]
+    /// <summary>
+    /// This class acts as a controller that contains methods for handling GET, POST and DELETE requests for Employees.
+    /// It uses the Manage Employee service to perform operations on the database. 
+    /// </summary>
     public class EmployeeController : ApiController
     {
+        
         // GET api/employee
+        /// <summary>
+        /// This method uses the Manage Employee service to retrieve all employees from the database
+        /// </summary>
+        /// <returns>
+        /// Employees data with 200 status on Success,
+        /// Exception with 500 status on Failure
+        /// </returns>
         public IHttpActionResult Get()
         {
             try {
@@ -21,7 +32,7 @@ namespace EmployeeService.Controllers
             }
             catch(Exception e)
             {
-                return BadRequest();
+                return BadRequest(e.ToString());
             }
         }
 
@@ -38,9 +49,20 @@ namespace EmployeeService.Controllers
         //}
 
         // POST api/employee
+        /// <summary>
+        /// This method retrieves the Employee object from the body of the incoming POST request and
+        /// uses the Manage Employee service to insert the employee into the database. It also returns
+        /// the calculated salary
+        /// </summary>
+        /// <param name="emp">
+        /// Body of the incoming POST request
+        /// </param>
+        /// <returns>
+        /// Calculated salary with 200 status on Success,
+        /// Exception with 500 status on Failure
+        /// </returns>
         public IHttpActionResult Post( [FromBody]Employee emp)
-        {
-            
+        {           
             try
             {
                 float result = ManageEmployee.createEmployee(emp);
@@ -50,16 +72,27 @@ namespace EmployeeService.Controllers
             }
             catch(Exception e)
             {
-                return BadRequest();
+                return BadRequest(e.ToString());
             }
         }
 
-        // PUT api/employee/5
-        public void Put(int id, [FromBody]string value)
-        {
-        }
+        //// PUT api/employee/5
+        //public void Put(int id, [FromBody]string value)
+        //{
+        //}
 
         // DELETE api/employee/5
+        /// <summary>
+        /// This method uses the Manage Employee service to delete an employee from the database with 
+        /// the Employee Id received in the DELETE request.
+        /// </summary>
+        /// <param name="id">
+        /// Employee Id extracted from the URL of the incoming DELETE request
+        /// </param>
+        /// <returns>
+        /// 200 status on Success
+        /// Exception with 500 status on Failure
+        /// </returns>
         public IHttpActionResult Delete(int id)
         {
             try
@@ -69,7 +102,7 @@ namespace EmployeeService.Controllers
             }
             catch(Exception e)
             {
-                return BadRequest();
+                return BadRequest(e.ToString());
             }
         }
     }

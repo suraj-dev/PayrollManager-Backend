@@ -1,5 +1,8 @@
 ﻿namespace EmployeeService.Model
 {
+    /// <summary>
+    /// This class contains fields holding employee as well as Salary information
+    /// </summary>
     public class Employee
     {
         public string FirstName { get; set; }
